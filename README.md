@@ -1,9 +1,9 @@
 # kubecf-docs
 
 
-This repository holds the [KubeCF]() docs.
+This repository holds the [KubeCF](https://github.com/SUSE/kubecf) docs.
 
-The `master` branch holds the sources that are compiled with [Hugo].
+The `master` branch holds the sources that are compiled with [Hugo](https://gohugo.io/).
 
 The website content it is deployed automatically in the `gh-pages` branch by Travis, and no manual intevention is needed.
 
