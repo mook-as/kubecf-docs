@@ -26,3 +26,5 @@ npm install -D --save autoprefixer
 npm install -D --save postcss-cli
 
 HUGO_ENV="production" "${binpath}/hugo" --gc -b "${BASE_URL}" -d "${publicpath}"
+
+cp -rfv CNAME "${publicpath}"
