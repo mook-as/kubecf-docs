@@ -17,3 +17,8 @@ After cloning the repo (with submodules), just run `make serve` to test the webs
     $> make serve
 ```
 
+To run the website locally in other platforms, e.g. MacOS:
+
+```
+    $> HUGO_PLATFORM=macOS-64bit make serve
+```
