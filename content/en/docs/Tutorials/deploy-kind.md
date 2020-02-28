@@ -161,13 +161,12 @@ After all the pods are running you can check by running the *cf* cli command:
 ```
 > cf api --skip-ssl-validation api.172.17.0.3.nip.io
 ```
+
 get the admin password:
 
-`> admin_pass=$(kubectl get secret \
-        --namespace kubecf kubecf.var-cf-admin-password \
-        -o jsonpath='{.data.password}' \
-        | base64 --decode)`
-
+```
+> admin_pass=$(kubectl get secret --namespace kubecf kubecf.var-cf-admin-password -o jsonpath='{.data.password}' | base64 --decode)
+```
 
 and login with: `cf auth admin "${admin_pass}"`
 
