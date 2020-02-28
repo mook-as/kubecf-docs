@@ -1,4 +1,12 @@
-# Before you begin
+---
+title: "Deploy KubeCF on Kind"
+date: 2020-02-28
+weight: 3
+description: >
+  Step-by-step guide to deploy KubeCF on top of Kind
+---
+
+## Before you begin
 
 This guideline will provide a quick way to deploy KubeCF with Kind and should be used only for evaluation purposes.
 
@@ -40,7 +48,7 @@ cf version 6.46.1+4934877ec.2019-08-23z
 
 To install Kind please follow the official instructions [here](https://kind.sigs.k8s.io/docs/user/quick-start/).
 
-# Create a Kind cluster
+## Create a Kind cluster
 
 To make sure that the cluster is set correctly to host KubeCF, we recommended to go through bazel from the root of the repository:
 
@@ -50,7 +58,7 @@ To make sure that the cluster is set correctly to host KubeCF, we recommended to
 > kubectl cluster-info --context kind-kubecf
 ```
 
-# Installing cf-operator
+## Installing cf-operator
 
 Before we can deploy the [cf-operator](https://github.com/cloudfoundry-incubator/cf-operator) we need to create the namespace:
 
@@ -78,7 +86,7 @@ Check if the pods are up and running before moving to the next section:
 > kubectl get pods -n cfo
 ```
 
-# Installing KubeCF
+## Installing KubeCF
 
 First let's get Kind node IP address:
 
@@ -163,11 +171,11 @@ get the admin password:
 
 and login with: `cf auth admin "${admin_pass}"`
 
-# What's next
+## What's next
 
 After the deployment finishes with success it's time to give it a try by pushing an app using the cf-push cli command.
 
-# Cleaning up
+## Cleaning up
 
 ```
 > kind delete cluster --name kubecf
