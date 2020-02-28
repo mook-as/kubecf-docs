@@ -114,9 +114,15 @@ lines into your **values.yaml** file:
 ```
 ...
 features:
-    eirini:
-        enabled: true
+  eirini:
+    enabled: true
 ...
+```
+
+and, you need to trust the kubernetes root CA on the kind docker container:
+
+```
+> docker exec -it "kubecf-control-plane" bash -c 'cp /etc/kubernetes/pki/ca.crt /etc/ssl/certs/ && update-ca-certificates && (systemctl list-units | grep containerd > /dev/null && systemctl restart containerd)'
 ```
 
 the **values.yaml** file should be similiar to the snippet:
@@ -147,7 +153,8 @@ Notes:
 
 1. the namespace property value is the same as cf-operator watchNamespace one
 
-Be aware that it takes a couple of minutes to see the pods showing up on the kubecf namespace and the installation process may take 20-25 minutes.
+Be aware that it takes a couple of minutes to see the pods showing up on the kubecf namespace and the installation process may take 20-25 minutes depending on your
+internet connection speed.
 
 Run the following command to watch the pods progress:
 
