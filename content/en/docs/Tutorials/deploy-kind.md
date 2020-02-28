@@ -50,8 +50,7 @@ To install Kind please follow the official instructions [here](https://kind.sigs
 
 ## Create a Kind cluster
 
-To make sure that the cluster is set correctly to host KubeCF, we recommended to go through bazel from the root of the repository:
-
+Run the following commands:
 ``` 
 > export KUBECONFIG=kubeconfig-kubecf
 > kind create cluster --name kubecf
