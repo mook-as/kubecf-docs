@@ -146,7 +146,7 @@ Now is time to install KubeCF by running the helm command:
 > helm install kubecf \
     --namespace kubecf \
     --values values.yaml \
-https://github.com/SUSE/kubecf/releases/download/v0.2.0/kubecf-0.2.0.tgz
+https://github.com/cloudfoundry-incubator/kubecf/releases/download/v0.2.0/kubecf-0.2.0.tgz
 ```
 
 Notes:

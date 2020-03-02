@@ -1,7 +1,7 @@
 # kubecf-docs
 
 
-This repository holds the [KubeCF](https://github.com/SUSE/kubecf) docs.
+This repository holds the [KubeCF](https://github.com/cloudfoundry-incubator/kubecf) docs.
 
 The `master` branch holds the sources that are compiled with [Hugo](https://gohugo.io/).
 
@@ -12,7 +12,7 @@ The website content it is deployed automatically in the `gh-pages` branch by Tra
 After cloning the repo (with submodules), just run `make serve` to test the website locally.
 
 ```
-    $> git clone --recurse-submodule https://github.com/SUSE/kubecf-docs
+    $> git clone --recurse-submodule https://github.com/cloudfoundry-incubator/kubecf-docs
     $> cd kubecf-docs
     $> make serve
 ```

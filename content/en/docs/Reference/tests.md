@@ -28,7 +28,7 @@ properties:
 ```
 
 [`acceptance_tests.include`]:  https://github.com/SUSE/cf-acceptance-tests-release/blob/0.0.1/jobs/acceptance-tests/spec#L47-L54
-[`values.yaml`]: https://github.com/SUSE/kubecf/blob/master/deploy/helm/kubecf/values.yaml
+[`values.yaml`]: https://github.com/cloudfoundry-incubator/kubecf/blob/master/deploy/helm/kubecf/values.yaml
 
 Note that this is an example of how to use the second kind of
 customization feature noted in the main
