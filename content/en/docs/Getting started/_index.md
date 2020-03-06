@@ -7,7 +7,7 @@ description: >
 ---
 
 {{% pageinfo %}}
-There is not an official release yet, [check out our nightlies](https://scf-v3.s3.amazonaws.com/index.html).
+There is not an official release yet, [check out our nightlies](https://kubecf.s3.amazonaws.com/index.html).
 {{% /pageinfo %}}
 
 ## Prerequisites
@@ -25,7 +25,7 @@ KubeCF is packaged as an Helm chart.
 
 Currently there isn't any official release. 
 
-Nightly builds can be found on the [KubeCF public s3 bucket](https://scf-v3.s3.amazonaws.com/index.html).
+Nightly builds can be found on the [KubeCF public s3 bucket](https://kubecf.s3.amazonaws.com/index.html).
 
 ## Try it out!
 
