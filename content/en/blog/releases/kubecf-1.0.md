@@ -8,7 +8,7 @@ description: >
 ---
 KubeCF first major release is out 🥳 ...
 
-<img src="https://media.giphy.com/media/Sk5uipPXyBjfW/giphy.gif">
+![kubecf-1.0](https://media.giphy.com/media/Sk5uipPXyBjfW/giphy.gif "KubeCF 1.0!")
 
 # Features
 
