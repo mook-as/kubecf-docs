@@ -20,14 +20,6 @@ Beyond this, the keys used to encrypt the Cloud Controller Database
 secrets of the KubeCF deployment. This means that the general process
 explained above __does not apply__ to them.
 
-
-## Secret Rotation
-
-Note, this document explains the general rotation of secrets.
-
-The instructions to rotate the CCDB keys specifically are in
-[a separate document](secret_rotation.md).
-
 The audience of this document are:
 
   - Developers working on KubeCF.

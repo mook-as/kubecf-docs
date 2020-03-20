@@ -46,6 +46,22 @@ combinations of choices in detail, from the bottom up.
 |[Local Minikube](/docs/tutorials/deploy-minikube/) |Minikube/Bazel + Operator/Bazel + Kubecf/Bazel |
 |[General Kube](/docs/getting-started/kubernetes-deploy/)    |Any Kube + Operator/Helm + Kubecf/Helm         |
 
+
+## Build from source
+
+To build KubeCF from source, ``bazel`` is required.
+You can check [the official bazel docs on how to install](https://docs.bazel.build/versions/master/install.html) it in your system.
+
+To build [KubeCF](https://github.com/cloudfoundry-incubator/kubecf) from source, you can just:
+
+```sh
+$> git clone https://github.com/cloudfoundry-incubator/kubecf
+$> cd kubecf
+$> bazel build //deploy/helm/kubecf
+```
+
+This will generate a helm chart, which can be installed with Helm3 in your Kubernetes cluster!
+
 ## Pull Requests
 
 The general work flow for pull requests contributing bug fixes,
