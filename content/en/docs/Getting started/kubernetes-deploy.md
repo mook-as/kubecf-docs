@@ -58,7 +58,7 @@ with Helm Tiller pre-installed.
 ### Deployment and Tear-down
 
 ```shell
-helm install --name cf-operator \
+helm install cf-operator \
      --namespace cfo \
      --set "global.operator.watchNamespace=kubecf" \
      https://s3.amazonaws.com/cf-operators/helm-charts/cf-operator-v0.4.2-147.gb88e4296.tgz
@@ -103,7 +103,7 @@ This again uses helm and a released helm chart.
 ### Deployment and Tear-down
 
 ```shell
-helm install --name kubecf \
+helm install kubecf \
      --namespace kubecf \
      https://kubecf.s3.amazonaws.com/kubecf-v0.0.0-998b961.tgz \
      --set "system_domain=kubecf.suse.dev"
