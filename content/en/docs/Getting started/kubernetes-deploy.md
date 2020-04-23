@@ -124,7 +124,7 @@ cf api --skip-ssl-validation "https://api.<domain>"
 
 # Copy the admin cluster password.
 admin_pass=$(kubectl get secret \
-        --namespace kubecf kubecf.var-cf-admin-password \
+        --namespace kubecf var-cf-admin-password \
         -o jsonpath='{.data.password}' \
         | base64 --decode)
 
