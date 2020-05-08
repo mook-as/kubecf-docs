@@ -89,7 +89,7 @@ helm install ... --set 'operations.custom={nats-dev}'
 ```
 
 __Note__: You can also unpack the helm release and modify it directly.
-There is no need to zip the release again, as `helm install scf/` is
+There is no need to zip the release again, as `helm install kubecf/` is
 able to install the unpacked release.
 
 Note further that the above is an example of how to use the first kind
