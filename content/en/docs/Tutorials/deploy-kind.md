@@ -122,7 +122,9 @@ features:
 and, you need to trust the kubernetes root CA on the kind docker container:
 
 ```
-> docker exec -it "kubecf-control-plane" bash -c 'cp /etc/kubernetes/pki/ca.crt /etc/ssl/certs/ && update-ca-certificates && (systemctl list-units | grep containerd > /dev/null && systemctl restart containerd)'
+> docker exec -it "kubecf-control-plane" bash -c 'cp /etc/kubernetes/pki/ca.crt /etc/ssl/certs/ && \
+    update-ca-certificates && \
+    (systemctl list-units | grep containerd > /dev/null && systemctl restart containerd)'
 ```
 
 the **values.yaml** file should be similiar to the snippet:
@@ -146,7 +148,7 @@ Now is time to install KubeCF by running the helm command:
 > helm install kubecf \
     --namespace kubecf \
     --values values.yaml \
-https://github.com/cloudfoundry-incubator/kubecf/releases/download/v0.2.0/kubecf-0.2.0.tgz
+    https://github.com/cloudfoundry-incubator/kubecf/releases/download/v0.2.0/kubecf-0.2.0.tgz
 ```
 
 Notes:
@@ -171,7 +173,9 @@ After all the pods are running you can check by running the *cf* cli command:
 get the admin password:
 
 ```
-> admin_pass=$(kubectl get secret --namespace kubecf kubecf.var-cf-admin-password -o jsonpath='{.data.password}' | base64 --decode)
+> admin_pass=$(kubectl get secret --namespace kubecf \
+                                  kubecf.var-cf-admin-password \
+                                  -o jsonpath='{.data.password}' | base64 --decode)
 ```
 
 and login with: `cf auth admin "${admin_pass}"`
