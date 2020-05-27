@@ -161,10 +161,10 @@ This has to happen before deploying kubecf.
 helm install stable/nginx-ingress \
   --name ingress \
   --namespace ingress \
-  --set "tcp.2222=kubecf/kubecf-scheduler:2222" \
-  --set "tcp.<services.tcp-router.port_range.start>=kubecf/kubecf-tcp-router:<services.tcp-router.port_range.start>" \
+  --set "tcp.2222=kubecf/scheduler:2222" \
+  --set "tcp.<services.tcp-router.port_range.start>=kubecf/tcp-router:<services.tcp-router.port_range.start>" \
   ...
-  --set "tcp.<services.tcp-router.port_range.end>=kubecf/kubecf-tcp-router:<services.tcp-router.port_range.end>"
+  --set "tcp.<services.tcp-router.port_range.end>=kubecf/tcp-router:<services.tcp-router.port_range.end>"
 ```
 
 The `tcp.<port>` option uses the NGINX TCP pass-through.
