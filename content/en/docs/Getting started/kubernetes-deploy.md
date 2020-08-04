@@ -73,7 +73,7 @@ master.
 > The above `helm install` will generate many controllers spread over multiple pods inside the `cfo` namespace.
 > Most of these controllers run inside the `cf-operator` pod.
 >
-> The `global.operator.watchNamespace=kubecf` path tells the
+> The `global.singleNamespace.name=kubecf` path tells the
 controllers to watch for CRD´s instances into the `kubecf` namespace.
 >
 > The cf-operator helm chart will generate the `kubecf` namespace during installation, and eventually one of the
