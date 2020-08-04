@@ -65,7 +65,7 @@ helm install cf-operator \
 ```
 
 In the example above, version 5.0.0 of the operator was used. Look
-into the `cf_operator` section of the top-level `def.bzl` file to find
+into the `cf_operator` [section](https://github.com/cloudfoundry-incubator/kubecf/blob/13ffb01dff8ab5eba16da54539b36e3b3b5f758e/dependencies.yaml#L108) of the top-level `dependencies.yaml` file to find
 the version of the operator validated against the current kubecf
 master.
 
@@ -187,11 +187,11 @@ details.
 
 [values.yaml]: ../../deploy/helm/kubecf/values.yaml
 
-For local development with an external database, the
-`bazel run //dev/external_database:deploy_mysql` command will bring a mysql database up and running
+For local development with an external database, the command
+`bash  ./scripts/deploy_mysql.sh` will bring a mysql database up and running
 ready to be consumed by kubecf.
 
-An example for the additional values to be provided to `//dev/kubecf:apply`:
+An example for the additional values to be provided to `make kubecf:apply`:
 
 ```yaml
 features:
