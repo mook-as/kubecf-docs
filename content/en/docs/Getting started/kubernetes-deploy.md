@@ -60,7 +60,7 @@ with Helm Tiller pre-installed.
 ```shell
 helm install cf-operator \
      --namespace cfo \
-     --set "global.operator.watchNamespace=kubecf" \
+     --set "global.singleNamespace.name=kubecf" \
      https://cf-operators.s3.amazonaws.com/helm-charts/cf-operator-5.0.0%2B0.gd7ac12bc.tgz
 ```
 
