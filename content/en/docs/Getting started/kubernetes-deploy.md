@@ -61,10 +61,10 @@ with Helm Tiller pre-installed.
 helm install cf-operator \
      --namespace cfo \
      --set "global.operator.watchNamespace=kubecf" \
-     https://s3.amazonaws.com/cf-operators/helm-charts/cf-operator-v0.4.2-147.gb88e4296.tgz
+     https://cf-operators.s3.amazonaws.com/helm-charts/cf-operator-5.0.0%2B0.gd7ac12bc.tgz
 ```
 
-In the example above, version 0.4.1 of the operator was used. Look
+In the example above, version 5.0.0 of the operator was used. Look
 into the `cf_operator` section of the top-level `def.bzl` file to find
 the version of the operator validated against the current kubecf
 master.
@@ -105,7 +105,7 @@ This again uses helm and a released helm chart.
 ```shell
 helm install kubecf \
      --namespace kubecf \
-     https://kubecf.s3.amazonaws.com/kubecf-v0.0.0-998b961.tgz \
+     https://kubecf.s3.amazonaws.com/kubecf-v2.3.0.tgz \
      --set "system_domain=kubecf.suse.dev"
 ```
 
