@@ -19,11 +19,13 @@ which go deeper into the details of each aspect.
 
   - [Deployment](#deployment)
   - [Pull Requests](#pull-requests)
-  - [Source Organization](/docs/reference/layout/)
+  - [Source Organization](#source-organization)
+  - [Updating Subcharts](#updating-subcharts)
   - [Docker Images](#docker-images)
   - [Linting](#linting)
   - [Patching](#patching)
-  - [BOSH Development Workflow](/docs/tutorials/bosh-integration/)
+  - [BOSH Development Workflow]
+  - [Rotating secrets](#rotating-secrets)
 
 ## Deployment
 
@@ -41,26 +43,10 @@ Instead of trying to document all the possibilities and all their
 interactions at once, supporting documents will describe specific
 combinations of choices in detail, from the bottom up.
 
-|Document                          |Description                                    |
-|---                               |---                                            |
-|[Local Minikube](/docs/tutorials/deploy-minikube/) |Minikube/Bazel + Operator/Bazel + Kubecf/Bazel |
-|[General Kube](/docs/getting-started/kubernetes-deploy/)    |Any Kube + Operator/Helm + Kubecf/Helm         |
-
-
-## Build from source
-
-To build KubeCF from source, ``bazel`` is required.
-You can check [the official bazel docs on how to install](https://docs.bazel.build/versions/master/install.html) it in your system.
-
-To build [KubeCF](https://github.com/cloudfoundry-incubator/kubecf) from source, you can just:
-
-```sh
-$> git clone https://github.com/cloudfoundry-incubator/kubecf
-$> cd kubecf
-$> bazel build //deploy/helm/kubecf
-```
-
-This will generate a helm chart, which can be installed with Helm3 in your Kubernetes cluster!
+| Document                          | Description                            |
+|-----------------------------------|----------------------------------------|
+| [Local Minikube](dev/minikube.md) | Minikube + Operator + Kubecf           |
+| [General Kube](dev/general.md)    | Any Kube + Operator/Helm + Kubecf/Helm |
 
 ## Pull Requests
 
@@ -79,6 +65,9 @@ features, etc. is:
     questions, requesting changes, and generally discussing the
     submission with the submitter and among themselves.
 
+  - PRs from branches of this repository are automatically tested [in the CI](https://concourse.suse.dev/teams/main/pipelines/kubecf).
+    For forks, you should ask a maintainer of this repository to trigger a build. Automated triggers have been disabled for security reasons.
+
   - After all issues with the request are resolved, and CI has passed,
     a developer will merge it into master.
 
@@ -90,6 +79,49 @@ features, etc. is:
     contributor, on the assumption that the contributor is best suited
     to resolving the conflicts.
 
+## Source Organization
+
+The important directories of the kubecf sources, and their contents
+are shown in the table below. Each directory entry links to the
+associated documentation, if we have any.
+
+|Directory                                                              |Content                                                |
+|---                                                                    |---                                                    |
+|__top__                                                                |Documentation entrypoint, License,                     |
+|                                                                       |Main workspace definitions.                            |
+|__top__/.../README.md                                                  |Directory-specific local documentation.                |
+|[__top__/bosh/releases](../bosh/releases/pre_render_scripts/README.md) |Support for runtime patches of a kubecf deployment.    |
+|__top__/doc                                                            |Global documentation.                                  |
+|[__top__/dev/cf_deployment/bump](cf_deployment/bump.md)                |Tools to support updating the cf deployment            |
+|                                                                       |manifest used by kubecf.                               |
+|[__top__/dev/cf_cli](cf_cli.md)                                        |Deploy cf cli into a helper pod from which to then     |
+|                                                                       |inspect the deployed Kubecf                            |
+|[__top__/dev/kube](inspection.md)                                      |Tools to inspect kube clusters and kubecf deployments. |
+|[__top__/dev/kubecf](../dev/kubecf/README.md)                          |Kubecf chart configuration                             |
+|__top__/deploy/helm/kubecf                                             |Templates and assets wrapping a CF deployment          |
+|                                                                       |manifest into a helm chart.                            |
+|__top__/rules                                                          |Supporting scripts.                                    |
+|[__top__/testing](tests.md)                                            |Scripts with specific testing                          |
+|[__top__/scripts](../scripts/README.md)                                |Developer scripts used by make to start a k8s cluster  |
+|                                                                       |(for example on kind), lint, build, run & test kubecf  |
+|[__top__/scripts/tools](../scripts/tools/README.md)                    |Developer scripts pinning the development dependencies |
+
+
+## Updating subcharts
+
+The kubecf helm chart includes a number of subcharts. They are declared in
+[requirements.yaml](../deploy/helm/kubecf/requirements.yaml). For the
+convenience of development they are included in unpacked form directly in
+this repo, so version changes can be inspected with regular `git` tools,
+and the subcharts can be searched with `grep` etc.
+
+The procedure to update the version of a subchart is:
+
+```
+vi deploy/helm/kubecf/requirements.yaml
+./dev/helm/update_subcharts.sh
+git commit
+```
 
 ## Docker Images
 
@@ -97,27 +129,23 @@ The docker images used by kubecf to run jobs in container use a
 moderately complex naming scheme.
 
 This scheme is explained in a separate document:
-[The Naming Of Docker Images in kubecf](/docs/reference/image-naming/).
+[The Naming Of Docker Images in kubecf](dev/image-naming.md).
 
 ## Linting
 
-Currently, 3 linters are available:
+Currently, 3 linters are available: shellcheck, yamllint, & helm linting.
 
-  - `dev/linters/shellcheck.sh`
-  - `dev/linters/yamllint.sh`
-  - `dev/linters/helmlint.sh`
-
-Invoke these linters as
+Invoke these linters with
 
 ```sh
-dev/linters/shellcheck.sh
-dev/linters/yamllint.sh
-dev/linters/helmlint.sh
+make lint
 ```
 
 to run shellcheck on all `.sh` files found in the entire checkout, or yamllint
 on all `.yaml` or `.yml` files respectively, and report any issues found.  The
 last option runs `helm lint` (without `--strict`) on the generated helm chart.
+
+See the authoritative list of linters being called in the `make lint` target.
 
 ## Patching
 
@@ -179,49 +207,51 @@ Kubecf provides two mechanisms for customization during development
 
      For example, `kubectl apply` the object below
 
-```yaml
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: configmap_name
-data:
-  ops: |-
-    some_random_ops
-```
+         ```yaml
+         ---
+         apiVersion: v1
+         kind: ConfigMap
+         metadata:
+           name: configmap_name
+         data:
+           ops: |-
+             some_random_ops
+         ```
 
      and then use
 
-```yaml
-operations:
-  custom:
-  - configmap_name
-```
+         ```yaml
+         operations:
+           custom:
+           - configmap_name
+         ```
 
-  in the values.yaml (or an equivalent `--set` option) as part of a
-  kubecf deployment to include that ops file in the deployment.
+     in the values.yaml (or an equivalent `--set` option) as part of a
+     kubecf deployment to include that ops file in the deployment.
 
-  The [BOSH Development Workflow](/docs/tutorials/bosh-integration/) is an example of its use.
+     The [BOSH Development Workflow] is an example of its use.
+
+     [BOSH Development Workflow]: bosh-release-development.md
 
   2. The second mechanism allows the specification of any custom BOSH
      property for any instancegroup and job therein.
 
      Just specifying
 
-```yaml
-properties:
-  instance-group-name:
-    job-name:
-      some-property: some-value
-```
+         ```yaml
+         properties:
+           instance-group-name:
+             job-name:
+               some-property: some-value
+         ```
 
-  in the values.yaml for the kubecf chart causes the chart to
-  generate and use an ops file which applies the assignment of
-  `some-value` to `some-property` to the specified instance group
-  and job during deployment.
+     in the values.yaml for the kubecf chart causes the chart to
+     generate and use an ops file which applies the assignment of
+     `some-value` to `some-property` to the specified instance group
+     and job during deployment.
 
-  An example of its use in Kubecf is limiting the set of test
-  suites executed by the [CF acceptance tests](/docs/reference/tests).
+     An example of its use in Kubecf is limiting the set of test
+     suites executed by the [CF acceptance tests](tests_cat.md).
 
 Both forms of customization assume a great deal of familiarity on the
 part of the developer and/or operator with the BOSH releases, instance
@@ -238,7 +268,7 @@ job was rendered and then executed. At the core, the feature allows
 the user to execute custom scripts during runtime of the job container
 for a specific instance_group.
 
-[Pre render scripts](/docs/reference/layout/patches/) are the equivalent feature of the CF operator.
+[Pre render scripts] are the equivalent feature of the CF operator.
 
 [patches]: https://github.com/SUSE/scf/tree/develop/container-host-files/etc/scf/config/scripts/patches
 [Pre render scripts]: https://github.com/cloudfoundry-incubator/cf-operator/blob/master/docs/from_bosh_to_kube.md#Pre_render_scripts
@@ -248,7 +278,7 @@ deployment. The relevant patch scripts are found under the directory
 `bosh/releases/pre_render_scripts`.
 
 When following the directory structure explained by the
-[README](/docs/reference/layout/patches/), the bazel machinery for generating
+[README](pre-render-scripts.md), the bazel machinery for generating
 the kubecf helm chart will automatically convert these scripts into
 the proper ops files for use by the CF operator.
 
@@ -258,3 +288,20 @@ without changing the result.
 
 The existing patch scripts do this by checking if the patch is already
 applied before attempting to apply it for real.
+
+## Rotating Secrets
+
+__Rotating secrets__ is in general the process of updating one or more
+secrets to new values and restarting all affected pods so that they
+will use these new values.
+
+Most of the process is automatic. How to trigger it is explained
+in [Secret Rotation](secret_rotation.md).
+
+Beyond this, the keys used to encrypt the Cloud Controller Database
+(CCDB) can also be rotated, however, they do not exist as general
+secrets of the KubeCF deployment. This means that the general process
+explained above __does not apply__ to them.
+
+Their custom process is explained in
+[CCDB encryption key rotation](encryption_key_rotation.md).
