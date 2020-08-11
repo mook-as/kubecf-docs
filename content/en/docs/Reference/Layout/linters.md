@@ -7,7 +7,7 @@ description: >
    Tools for statically checking the kubecf sources
 ---
 
-The directory __dev/linters__ contains tooling to statically check the
+The `make lint` targets runs tooling to statically check the
 sources of kubecf.
 
 The following linters are available:
@@ -25,3 +25,4 @@ The following linters are available:
   - `helmlint.sh`:
 
     Runs `helm lint` on the generated `kubecf` chart and repos any errors found.
+
