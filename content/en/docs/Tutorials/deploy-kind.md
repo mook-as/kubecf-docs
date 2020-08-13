@@ -51,11 +51,26 @@ To install Kind please follow the official instructions [here](https://kind.sigs
 ## Create a Kind cluster
 
 Run the following commands:
-``` 
+```
 > export KUBECONFIG=kubeconfig-kubecf
 > kind create cluster --name kubecf
 > kubectl cluster-info --context kind-kubecf
 ```
+
+## Download cf-operator and KubeCF Helm charts
+
+Download the latest release bundle (`kubecf-bundle-vX.X.X.tgz`) to a local directory and extract it:
+
+```
+> curl -s https://api.github.com/repos/cloudfoundry-incubator/kubecf/releases/latest \
+   | grep -oP '"browser_download_url": "\K(.*)kubecf-bundle(.*)(?=")' \
+   | wget -qi -
+> tar xf kubecf-bundle-v*.tgz
+```
+
+The archive contains cf-operator and KubeCF Helm charts (`cf-operator.tgz` and `kubecf_release.tgz` respectively).
+
+All releases can be found on [KubeCF releases](https://github.com/cloudfoundry-incubator/kubecf/releases) page.
 
 ## Installing cf-operator
 
@@ -70,13 +85,13 @@ and after we can install by running the helm command:
 ```
 > helm install cf-operator \
     --namespace cfo \
-    --set "global.operator.watchNamespace=kubecf" \
-    https://s3.amazonaws.com/cf-operators/helm-charts/cf-operator-v2.0.0-0.g0142d1e9.tgz
+    --set "global.singleNamespace.name=kubecf" \
+    ./cf-operator.tgz
 ```
 
 Notes:
 
-1. The *watchNamespace* property is set to watch the **kubecf** namespace for changes
+1. The `singleNamespace` property is set to watch the **kubecf** namespace for changes
 2. cf-operator version may differ between KubeCF versions
 
 Check if the pods are up and running before moving to the next section:
@@ -108,7 +123,7 @@ kube:
 _EOF_
 ```
 
-On this example, we will use Diego instead Eirini but you can easily switch by adding the following 
+On this example, we will use Diego instead Eirini but you can easily switch by adding the following
 lines into your **values.yaml** file:
 
 ```
@@ -148,12 +163,12 @@ Now is time to install KubeCF by running the helm command:
 > helm install kubecf \
     --namespace kubecf \
     --values values.yaml \
-    https://github.com/cloudfoundry-incubator/kubecf/releases/download/v0.2.0/kubecf-0.2.0.tgz
+    ./kubecf_release.tgz
 ```
 
 Notes:
 
-1. the namespace property value is the same as cf-operator watchNamespace one
+1. the namespace property value is the same as cf-operator `singleNamespace` one
 
 Be aware that it takes a couple of minutes to see the pods showing up on the kubecf namespace and the installation process may take 20-25 minutes depending on your
 internet connection speed.
@@ -174,7 +189,7 @@ get the admin password:
 
 ```
 > admin_pass=$(kubectl get secret --namespace kubecf \
-                                  kubecf.var-cf-admin-password \
+                                  var-cf-admin-password \
                                   -o jsonpath='{.data.password}' | base64 --decode)
 ```
 
