@@ -1,6 +1,6 @@
 ---
-title: "Deploy on Kubernetes"
-linkTitle: "Deploy on Kubernetes"
+title: "Deployment Walkthrough"
+linkTitle: "Deployment Walkthrough"
 date: 2017-01-05
 description: >
   Explain steps to deploy KubeCF in any Kubernetes cluster

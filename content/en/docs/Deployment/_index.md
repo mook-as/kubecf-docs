@@ -1,6 +1,6 @@
 ---
-title: "Getting Started"
-linkTitle: "Getting Started"
+title: "Deploying KubeCF on Kubernetes"
+linkTitle: "Deploying KubeCF"
 weight: 2
 description: >
   How to deploy KubeCF
@@ -31,5 +31,3 @@ one is the "kubecf-bundle" which contains the KubeCF chart along with the cf-ope
 The standalone chart (`kubecf.tgz`) contains a `Metadata.yaml` file which indicates the version of the cf-operator to install for a successfull deployment.
 
 ## Try it out!
-
-
