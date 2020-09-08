@@ -28,7 +28,7 @@ configuration values such as the following:
 sizing:
   uaa:
     affinity:
-      podAffinity:
+      podAntiAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
             matchExpressions:
@@ -44,6 +44,11 @@ helpful if your UAA instances consume resources to the point where they slow
 down API access.  Note that if any affinity or anti-affinity options are given,
 they will override the default anti-affinities; it is recommended that they be
 specified explicitly as well, as given in the example above.
+
+Note that it is also possible to declare `podAffinity`, as the whole affinity
+block is assumed to be a valid Kubernetes [affinity block].
+
+[affinity block]: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#affinity-v1-core
 
 ## Tolerations
 
@@ -80,3 +85,29 @@ sizing:
 ```
 
 Then any diego-cell containers will be allowed to run on the `beefy-node` node.
+This, of course, does not guarantee that those containers will actually run on
+that node; it is also available to run on any other node.  In order to enforce
+placement, we will also need to add a node label:
+
+```bash
+kubectl label nodes beefy-node instance-group-label=diego-cell
+```
+
+It is then possible to add a node affinity term to the instane group, so that
+it will always be scheduled on nodes with the given label:
+
+```yaml
+sizing:
+  diego-cell:
+    # tolerations: as above
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: instance-group-label
+              operator: In
+              values:
+              - diego-cell
+      # podAntiAffinity term, as above; the defaults will be lost.
+```
