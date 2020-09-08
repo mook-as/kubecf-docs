@@ -1,6 +1,7 @@
 ---
 title: "Kubernetes Affinities and Tolerations"
 linkTitle: "Affinities and Tolerations"
+weight: 50
 date: 2020-09-04
 description: >
   Managing which Kubernetes nodes workloads get deployed to
@@ -25,22 +26,24 @@ configuration values such as the following:
 
 ```yaml
 sizing:
-  diego-cell:
+  uaa:
     affinity:
       podAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
             matchExpressions:
-            - key: quarks.cloudfoundry.org/pod-ordinal
+            - key: quarks.cloudfoundry.org/quarks-statefulset-name
               operator: In
               values:
-              - "0"
+              - uaa
+              - api
 ```
 
-This will request diego-cell pods to avoid any other pods that have an ordinal
-of zero.  Note that if any affinity or anti-affinity options are given, they
-will override the default anti-affinities; it is recommended that they be
-specified explicitly as well.
+This will request `uaa` pods to avoid any other `uaa` or `api` pods; this may be
+helpful if your UAA instances consume resources to the point where they slow
+down API access.  Note that if any affinity or anti-affinity options are given,
+they will override the default anti-affinities; it is recommended that they be
+specified explicitly as well, as given in the example above.
 
 ## Tolerations
 
@@ -53,16 +56,27 @@ work from nodes that will be removed.
 [node]: https://kubernetes.io/docs/concepts/architecture/nodes/
 
 This can be configured in KubeCF on an instance group level, by providing the
-appropriate configuration in the helm values; as an example, given the
-following:
+appropriate configuration in the helm values.  For example, to allocate a
+Kubernetes node such that it will only run digeo-cell, we could do:
+
+```bash
+# This marks the node "beefy-node" with a taint of "instance-group"
+# with a value of "diego-cell", and avoid scheduling workloads that
+# do not have a matching taint.
+kubectl taint nodes beefy-node instance-group=diego-cell:NoSchedule
+```
+
+We could then allow diego-cell to be scheduled onto that node by deploying
+KubeCF with a helm `values.yaml` that contains the toleration:
 
 ```yaml
 sizing:
-  nats:
+  diego-cell:
     tolerations:
-    - key: node.kubernetes.io/out-of-disk
-      operator: Exists
+    - key: instance-group
+      operator: Equal
+      value: diego-cell
       effect: NoSchedule
 ```
 
-Then any NATS containers will be allowed to run on nodes that are out of disk.
+Then any diego-cell containers will be allowed to run on the `beefy-node` node.
