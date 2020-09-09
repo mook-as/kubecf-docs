@@ -1,6 +1,6 @@
 ---
-title: "Getting Started"
-linkTitle: "Getting Started"
+title: "Deploying KubeCF on Kubernetes"
+linkTitle: "Deploying KubeCF"
 weight: 2
 description: >
   How to deploy KubeCF
@@ -32,4 +32,6 @@ The standalone chart (`kubecf.tgz`) contains a `Metadata.yaml` file which indica
 
 ## Try it out!
 
+Detailed deployment instructions can be found on the [walkthrough] page.
 
+[walkthrough]: {{<ref kubernetes-deploy>}}
