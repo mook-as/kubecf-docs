@@ -45,28 +45,29 @@ down API access.  Note that if any affinity or anti-affinity options are given,
 they will override the default anti-affinities; it is recommended that they be
 specified explicitly as well, as given in the example above.
 
-Note that it is also possible to declare `podAffinity`, as the whole affinity
-block is assumed to be a valid Kubernetes [affinity block].
+Note that it is also possible to declare `nodeAffinity` and `podAffinity`, as
+the whole affinity block is assumed to be a valid Kubernetes [affinity block].
 
 [affinity block]: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#affinity-v1-core
 
 ## Tolerations
 
-Kubernetes has a concept of [tolerations], which can be used to prevent some
-workloads from running on a given [node]; this can be used to do things such as
-ensuring the physical host has the appropriate kinds of resources, or to evict
-work from nodes that will be removed.
+Kubernetes has a concept of [taints and tolerations], which can be used to
+prevent workloads from running on a given [node], and then whitelist some
+workloads on it again; this can be used to do things such as ensuring the
+physical host has the appropriate kinds of resources, or to evict work from
+nodes that will be removed.
 
-[tolerations]: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+[taints and tolerations]: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 [node]: https://kubernetes.io/docs/concepts/architecture/nodes/
 
-This can be configured in KubeCF on an instance group level, by providing the
-appropriate configuration in the helm values.  For example, to allocate a
+Tolerations can be configured in KubeCF on an instance group level, by providing
+the appropriate configuration in the helm values.  For example, to allocate a
 Kubernetes node such that it will only run digeo-cell, we could do:
 
 ```bash
 # This marks the node "beefy-node" with a taint of "instance-group"
-# with a value of "diego-cell", and avoid scheduling workloads that
+# with a value of "diego-cell", and prevents scheduling workloads that
 # do not have a matching taint.
 kubectl taint nodes beefy-node instance-group=diego-cell:NoSchedule
 ```
