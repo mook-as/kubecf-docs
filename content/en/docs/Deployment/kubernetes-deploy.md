@@ -156,7 +156,7 @@ are
 
 These things all mean that these pods should not live next to other
 Kubernetes workloads. They should all be placed on their own
-__dedicated nodes__ instead.
+__dedicated nodes__ instead where possible.
 
 This can be done by setting affinities and tolerations, as explained in
 the associated [tutorial].
