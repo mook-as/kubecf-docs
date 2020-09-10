@@ -30,7 +30,7 @@ requirements are met:
       - For GKE, using the option `--image-type UBUNTU` with the
         `gcloud beta container` command selects such an OS.
 
-This can be any of, but not restricted to:
+This can be any of, but is not restricted to:
 
   - GKE ([Notes](../provider/gke.md))
   - AKS
@@ -144,6 +144,24 @@ Kubernetes namespace.
 
 To activate this alternative, use the option
 `--set features.eirini.enabled=true` when deploying kubecf from its chart.
+
+#### Diego Cell Affinities & Tainted Nodes
+
+Note that the `diego-cell` pods used by the Diego standard scheduler
+are
+
+  - privileged,
+  - use large local emptyDir volumes (i.e. require node disk storage),
+  - and set kernel parameters on the node.
+
+These things all mean that these pods should not live next to other
+Kubernetes workloads. They should all be placed on their own
+__dedicated nodes__ instead where possible.
+
+This can be done by setting affinities and tolerations, as explained in
+the associated [tutorial].
+
+[tutorial]: {{<ref affinities-and-tolerations>}}
 
 #### Ingress
 
