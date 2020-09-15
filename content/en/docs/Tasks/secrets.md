@@ -1,6 +1,6 @@
 
 ---
-title: "Secret rotation KubeCF"
+title: "Secret Rotation in KubeCF"
 linkTitle: "KubeCF and Secrets"
 weight: 6
 date: 2020-03-19
@@ -18,17 +18,16 @@ in the following document.
 Beyond this, the keys used to encrypt the Cloud Controller Database
 (CCDB) can also be rotated, however, they do not exist as general
 secrets of the KubeCF deployment. This means that the general process
-explained above __does not apply__ to them.
+explained above __does not apply__ to them.  Instead, please refer to
+the [dedicated section] for it.
 
-The audience of this document are:
+[dedicated section]: {{<ref "#rotating-the-ccdb-encryption-keys">}}
 
-  - Developers working on KubeCF.
-
-  - Operators deploying KubeCF.
+This document applies to operators deploying KubeCF.
 
 ### Background
 
-One of the features KubeCF (or rather the cf-operator it sits on top
+One of the features KubeCF (or rather the quarks-operator it sits on top
 of) provides is the ability to declare secrets (passwords and
 certificates) and have the system automatically generate something
 suitably random for such on deployment, and distribute the results to
@@ -49,40 +48,42 @@ This document describes how this can be done, in the context of KubeCF.
 
 ### Finding secrets
 
-Retrieve the list of all secrets maintained by a KubeCF deployment via
+Retrieve the list of all secrets maintained by a KubeCF deployment (which we
+assume here to be deployed to the `kubecf` namespace) via:
 
-    kubectl get quarkssecret --namespace kubecf
+    kubectl get QuarksSecret --namespace kubecf
 
-To see the information about a specific secret, for example the NATS password, use
+To see the information about a specific secret, for example the NATS password,
+use:
 
-    kubectl get quarkssecret --namespace kubecf kubecf.var-nats-password --output yaml
+    kubectl get QuarksSecret --namespace kubecf var-nats-password --output yaml
 
-Note that each quarkssecret has a corresponding regulare k8s secret it
+Note that each QuarksSecret has a corresponding regular Kubernetes secret it
 controls.
 
     kubectl get secret --namespace kubecf
-    kubectl get secret --namespace kubecf kubecf.var-nats-password --output yaml
+    kubectl get secret --namespace kubecf var-nats-password --output yaml
 
 ### Requesting a rotation for a specific secret
 
-We keep using `kubecf.var-nats-password` as our example secret.
+We keep using `var-nats-password` as our example secret.
 
 To rotate this secret:
 
   1. Create a YAML file for a ConfigMap of the form:
 
-         ---
-         apiVersion: v1
-         kind: ConfigMap
-         metadata:
-           name: rotate-kubecf.var-nats-password
-           labels:
-             quarks.cloudfoundry.org/secret-rotation: "true"
-         data:
-           secrets: '["kubecf.var-nats-password"]'
+        ---
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: rotate.var-nats-password
+          labels:
+            quarks.cloudfoundry.org/secret-rotation: "true"
+        data:
+          secrets: '["var-nats-password"]'
 
      Note, while the name of this ConfigMap can be technically
-     anything (allowed by k8s syntax) we recommend using a name
+     anything (allowed by Kubernetes syntax) we recommend using a name
      derived from the name of the secret itself, to make the
      connection clear.
 
@@ -94,21 +95,21 @@ To rotate this secret:
 
          kubectl apply --namespace kubecf -f /path/to/your/yaml/file
 
-  3. The cf-operator will process this ConfigMap due the label
+  3. The quarks-operator will process this ConfigMap due the label
 
          quarks.cloudfoundry.org/secret-rotation: "true"
 
-     and knows that it has to invoke a rotation of the referenced
+     and know that it has to invoke a rotation of the referenced
      secrets.
 
-     The actions of the cf-operator can be followed in its log.
+     The actions of the quarks-operator can be followed in its log.
 
-   4. After the cf-operator has done the rotation, i.e. has not only
-      changed the secrets, but also restarted all affected pods (the
-      users of the rotated secrets), delete the trigger config map
-      again:
+  4. After the quarks-operator has done the rotation, i.e. has not only
+     changed the secrets, but also restarted all affected pods (the
+     users of the rotated secrets), delete the trigger config map
+     again:
 
-         kubectl delete --namespace kubecf -f /path/to/your/yaml/file
+        kubectl delete --namespace kubecf -f /path/to/your/yaml/file
 
 ## Rotating the CCDB encryption keys
 
