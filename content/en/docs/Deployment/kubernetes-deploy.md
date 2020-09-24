@@ -32,7 +32,7 @@ requirements are met:
 
 This can be any of, but is not restricted to:
 
-  - GKE ([Notes](../provider/gke.md))
+  - GKE
   - AKS
   - EKS
 
