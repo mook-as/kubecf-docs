@@ -52,7 +52,7 @@ be deployed to.
 Here we are not using development-specific dependencies like bazel,
 but only generic tools, i.e. `kubectl` and `helm`.
 
-[Installing and configuring Helm](helm.md) is the same regardless of
+Installing and configuring Helm is the same regardless of
 the chosen foundation, and assuming that the cluster does not come
 with Helm Tiller pre-installed.
 
