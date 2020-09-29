@@ -250,7 +250,7 @@ release "kubecf" uninstalled
 
 ### Access
 
-Run the following command to access the cluster after the cf-operator & kubecf has completed
+Run the following commands to access the cluster after the cf-operator and KubeCF has completed
 sucessfuly the deployment and all pods are up & running correctly
 
 ```shell
