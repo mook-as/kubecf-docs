@@ -53,7 +53,7 @@ combinations of choices in detail, from the bottom up.
 The general work flow for pull requests contributing bug fixes,
 features, etc. is:
 
-  - Branch or Fork the __suse/kubecf__ repository, depending on
+  - Branch or Fork the __cloudfoundry-incubator/kubecf__ repository, depending on
     permissions.
 
   - Implement the bug fix, feature, etc. on that branch/fork.
