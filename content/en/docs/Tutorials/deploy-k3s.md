@@ -6,6 +6,10 @@ description: >
   Step-by-step guide to deploy KubeCF on top of k3s
 ---
 
+## Before you begin
+
+This guideline will provide a quick way to deploy KubeCF with K3S and should be used only for evaluation purposes.
+
 ## Prerequisites
 
 - [K3s](https://github.com/rancher/k3s/)
@@ -15,8 +19,7 @@ description: >
 
 Before you begin you need a k3s cluster running and a [KubeCF release](https://github.com/cloudfoundry-incubator/kubecf/releases) copy extracted in a folder which will be used in the tutorial, you will find notes/tips to deploy on a VM based environment.
 
-{{% alert title="Install K3s" %}}
-
+### K3s installation notes
 `curl -sfL https://raw.githubusercontent.com/rancher/k3s/master/install.sh | INSTALL_K3S_EXEC="server --no-deploy traefik --node-external-ip $EXT_IP" sh`
 
 >
@@ -30,10 +33,7 @@ Depending on your Linux Distribution, you might want to install relevant package
 - Take the `kubeconfig` from `/etc/rancher/k3s/k3s.yaml` on the master node and edit `server` with the node ip reachable from outside
 - Debian hosts might need specific kernels, e.g. `apt install linux-image-4.19-cloud-amd64`
 
-{{% /alert %}}
-
-
-{{% alert title="Longhorn storage class" %}}
+### Longhorn installation notes
 
 Make sure to have installed host required dependencies (iscsi) ( for e.g. in Tumbleweed: `zypper in -y kernel-default which curl wget open-iscsi` )
 and enable them on boot `systemctl enable --now iscsid`.
@@ -53,18 +53,16 @@ $ kubectl create namespace longhorn-system
 $ helm install longhorn ./longhorn/chart/ --namespace longhorn-system --values longhorn_values.yaml
 ```
 
-{{% /alert %}}
-
-{{% alert title="SUSE Charts" %}}
+### SUSE charts
 
 Add the SUSE helm repository, where we will install nginx-ingress from:
 ```bash
 $ helm repo add suse https://kubernetes-charts.suse.com/
 "suse" has been added to your repositories
+$ helm repo update
 ```
-{{% /alert %}}
 
-## Install Nginx-ingress
+## Deploy Nginx-ingress
 
 We will use the nginx-ingress with KubeCF in the following example.
 
@@ -122,8 +120,8 @@ $ helm install nginx-ingress suse/nginx-ingress \
 --values nginx_ingress.yaml
 ```
 
+## Deploy Quarks-Operator
 ```bash
-
 
 $ kubectl create namespace cf-operator
 namespace/cf-operator created
@@ -131,6 +129,7 @@ namespace/cf-operator created
 $ helm install cf-operator ./cf-operator.tgz --namespace cf-operator --set "global.singleNamespace.name=kubecf"
 ```
 
+## Deploy KubeCF
 We will use a `nip.io` domain, for whose those aren't familiar, it's a free redirection service. Meaning that we can assign to kubecf an entire `*.domain` like `myip.nip.io` to make our deployment reachable from outside. If you aren't interested in the ingress option, just skip the instructions in the `features` block:
 
 ```bash
@@ -178,27 +177,27 @@ spec:
   secretName: nip.secret.ca
   type: certificate
 ---
-  apiVersion: quarks.cloudfoundry.org/v1alpha1
-  kind: QuarksSecret
-  metadata:
-    name: nip.quarks.tls
-    namespace: kubecf
-  spec:
-    request:
-      certificate:
-        CAKeyRef:
-          key: private_key
-          name: nip.secret.ca
-        CARef:
-          key: certificate
-          name: nip.secret.ca
-        alternativeNames:
-        - "*.$EXT_IP.nip.io"
-        commonName: kubeTlsTypeCert
-        isCA: false
-        signerType: local
-    secretName: kubecf-ingress-tls
-    type: tls
+apiVersion: quarks.cloudfoundry.org/v1alpha1
+kind: QuarksSecret
+metadata:
+  name: nip.quarks.tls
+  namespace: kubecf
+spec:
+  request:
+    certificate:
+      CAKeyRef:
+        key: private_key
+        name: nip.secret.ca
+      CARef:
+        key: certificate
+        name: nip.secret.ca
+      alternativeNames:
+      - "*.$EXT_IP.nip.io"
+      commonName: kubeTlsTypeCert
+      isCA: false
+      signerType: local
+  secretName: kubecf-ingress-tls
+  type: tls
 ```
 
 or by providing your own certificate in `kubecf/kubecf-ingress-tls` a tls certificate type.
