@@ -266,7 +266,7 @@ After deployment if Eirini is enabled, it's necessary to trust the CA used by ei
 On each node, you can do with (needs yq on the nodes):
  
 ```bash
-$ k3s kubectl  get secret kubecf-bits-service-ssl-csr-private-key -n kubecf -o yaml | yq r - 'data.private_key' | base64 -d > eirini-ca.crt
+$ k3s kubectl get secret bits-service-ssl -n kubecf -o yaml | yq r - 'data.ca' | base64 -d > eirini-ca.crt
 $ cp -rfv eirini-ca.crt /etc/ssl/certs/ && systemctl restart k3s
 ```
 {{% /alert %}}
