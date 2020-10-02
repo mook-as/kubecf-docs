@@ -220,6 +220,7 @@ EOF
 
 
 Finally let's install KubeCF:
+
 ```bash
 $ helm install kubecf --namespace kubecf ./kubecf_release.tgz --values kubecf-config-values.yaml
 
@@ -257,3 +258,16 @@ Welcome to your new deployment of KubeCF.
 ```
 
 Now you are ready to [deploy Stratos](/docs/tutorials/deploy-stratos/)
+
+{{% alert title="Note on eirini" %}}
+
+After deployment with Eirini is completed, it's necessary to trust the CA used by eirini to pull images from internal registry on the node.
+
+On each node, you can do with (needs yq on the nodes):
+
+```bash
+$ k3s kubectl get secret bits-service-ssl -n kubecf -o yaml | yq r - 'data.ca' | base64 -d > eirini-ca.crt
+
+$ cp -rfv eirini-ca.crt /etc/ssl/certs/ && systemctl restart k3s
+```
+{{% /alert %}}
