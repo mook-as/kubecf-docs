@@ -131,7 +131,7 @@ namespace/cf-operator created
 $ helm install cf-operator ./cf-operator.tgz --namespace cf-operator --set "global.singleNamespace.name=kubecf"
 ```
 
-We will use a `nip.io` domain, for whose those aren't familiar, it's a free redirection service. Meaning that we can assign to kubecf an entire `*.domain` like `myip.nip.io` to make our deployment reachable from outside. If you aren't interested in the ingress option, just set `features.ingress.enabled` to `false` instead:
+We will use a `nip.io` domain, for whose those aren't familiar, it's a free redirection service. Meaning that we can assign to kubecf an entire `*.domain` like `myip.nip.io` to make our deployment reachable from outside. If you aren't interested in the ingress option, just skip the instructions in the `features` block:
 
 ```bash
 cat <<EOF >> kubecf-config-values.yaml
@@ -144,8 +144,64 @@ credentials:
 features:
   ingress:
     enabled: true
+    tls:
+      crt: |
+        -----BEGIN CERTIFICATE-----
+        MIIE8jCCAtqgAwIBAgIUT/Yu/Sv8AUl5zHXXEKCy5RKJqmYwDQYJKoZIhvcMOQMM
+        [...]
+        xC8x/+zB7XlvcRJRio6kk670+25ABP==
+        -----END CERTIFICATE-----
+      key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIE8jCCAtqgAwIBAgIUSI02lj2b2ImLy/zMrjNgW5d8EygwQSVJKoZIhvcYEGAW
+        [...]
+        to2WV7rPMb9W9fd2vVUXKKHTc+PiNg==
+        -----END RSA PRIVATE KEY-----
 EOF
 ```
+
+if you don't have a certificate, and if you are setting up a staging environment, you can generate one with quarks-secret and avoid to provide it in the values, for e.g. by applying (mind to replace `$EXT_IP` with your ip ):
+
+```yaml
+apiVersion: quarks.cloudfoundry.org/v1alpha1
+kind: QuarksSecret
+metadata:
+  name: nip.quarks.ca
+  namespace: kubecf
+spec:
+  request:
+    certificate:
+      alternativeNames: null
+      commonName: $EXT_IP.nip.io
+      isCA: true
+      signerType: local
+  secretName: nip.secret.ca
+  type: certificate
+---
+  apiVersion: quarks.cloudfoundry.org/v1alpha1
+  kind: QuarksSecret
+  metadata:
+    name: nip.quarks.tls
+    namespace: kubecf
+  spec:
+    request:
+      certificate:
+        CAKeyRef:
+          key: private_key
+          name: nip.secret.ca
+        CARef:
+          key: certificate
+          name: nip.secret.ca
+        alternativeNames:
+        - "*.$EXT_IP.nip.io"
+        commonName: kubeTlsTypeCert
+        isCA: false
+        signerType: local
+    secretName: kubecf-ingress-tls
+    type: tls
+```
+
+or by providing your own certificate in `kubecf/kubecf-ingress-tls` a tls certificate type.
 
 {{% alert title="Storage Class" %}}
 
